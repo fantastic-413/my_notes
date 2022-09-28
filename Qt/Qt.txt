@@ -1,0 +1,122 @@
+1、重置窗口大小
+      resize(x,y);
+2、设置窗口标题
+      setWindowTitle(" ");
+3、设置固定窗口大小
+      setFixedSize(x,y);
+4、信号和槽
+（disconnec断开连接）
+      connect( 信号发送者(按钮对象)，发送的信号(函数地址 &QPushButton::信号函数)，
+                     信号接收者(窗口等)，处理的槽函数(函数地址 &QWidget::处理槽函数)  )
+	信号函数  	signs：click(),pressed(),released(),toggled(bool check)
+	槽函数  	slots: close(),
+5、自定义信号和槽
+      	1) 信号函数：无需实现，可有参数、重载
+      	2) 槽函数：需实现，可有参数、重载
+      先连接，再触发
+      	触发信号：emit + 信号函数(参数)；
+		可用一信号连接二信号实现触发一信号时触发二信号
+6、函数重载 中带参函数地址
+      void(作用域::*ptr)(参数) = &作用域::函数名；
+7、Qstring -> char * 
+	1) 先转成QByteArray	QString.toUtf8()
+	2) 再转char *		QString.toUtf8().data()
+8、Lambda表达式
+	[=,&,... ]( 参数 ){ 函数体 };     	//mutable用于修改值传递变量的拷贝
+	[=,&,... ]( 参数 )->返回值类型{ };       //函数体中多个return
+
+9、菜单栏
+	//菜单栏只能最多有一个
+	//菜单栏创建
+	QMenuBar * bar = menuBar();
+	//将菜单栏放入到窗口中
+	setMenuBar (bar);
+	//创建菜单
+	QMenu * fileMenu = bar->addMenu("文件");
+	QMenu * editMenu = bar->addMenu("编辑");
+	//创建菜单项
+	QAction * newAction = fileMenu->addAction("新建");
+	//添加分割线
+	fileMenu->addSeparator();
+	QAction * openAction = fileMenu->addAction("打开");
+10、工具栏
+	//工具栏可以有多个
+	QToolBar * toolBar = new QToolBar(this);
+	addToolBar(Qt::LeftToolBarArea,toolBar);
+	//后期设置只允许左右停靠
+	toolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea);
+	//设置浮动
+	toolBar->setFloatable(false);
+	//设置移动(总开关)
+	toolBar->setMovable(false);
+	//工具栏中可以设置内容
+	toolBar->addAction(newAction);
+	//添加分割线
+	toolBar->addSeparator();
+	toolBar->addAction(openAction);
+	//工具栏中添加控件
+	QPushButton * btn = new QPushButton("aa",this);
+	toolBar->addWidget(btn);
+11、状态栏
+	//状态栏最多有一个
+	QStatusBar * stBar = statusBar();
+	//设置到窗口中
+	setstatusBar(stBar);
+	//放标签控件
+	QLabel * label = new QLabel("提示信息",this);
+	stBar->addWidget(label);
+	QLabel * label2 = new QLabel("右侧提示信息",this);
+	stBar->addPermanentWidget(label2);
+12、铆接部件（浮动窗口）
+	//铆接部件（浮动窗口)可以有多个
+	QDockWidget * dockWidget = new QDockWidget("浮动",this);
+	addDockWidget(Qt::BottomDockWidgetArea,dockWidget);
+	//设置后期停靠区域，只允许上下
+	dockWidget->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+13、核心部件
+	//设置中心部件只能一个
+	QTextEdit * edit = new QTextEdit(this) ;
+	setCentralWidget(edit);
+14、模态和非模态对话框
+	//点击新建按钮弹出一个对话框
+	connect (ui->actionNew, &QAction::triggered, [=](){
+		//对话框分类
+		//模态对话框(不可以对其他窗口进行操作) 非模态对话框(可以对其他窗口进行操作)
+		//模态创建 (阻塞)
+		QDialog dlg (this);					//以栈形式
+		dlg.resize (200,100);
+		dlg.exec();
+		qDebug() <<"模态对话框弹出了";
+		//非模态对话框   （不阻塞，防止一闪而过要创建到堆区）
+		QDialog * dlg2 = new Qpialog(this);			//以堆形式
+		dlg2->resize (200,100);
+		dlg2->show();
+		dlg2->setAttribute(gt::wA_Deleteonclose); //55号属性
+		qDebug() <<"非模态对话框弹出了";
+	});
+15、信息对话框
+	//消息对话框
+	//错误对话框
+	QMessageBox::critical(this,"critical","错误");
+	//信息对话框
+	QMessageBox::information (this,"info","信息.");
+	//提问对话框
+ 	//参数1 父亲 参数2 标题 参数3 提示内容 参数4 按键类型 参数5 默认关联回车按键
+	//返回值 按下的按键类型
+	if (QMessageBox::Save == QMessageBox::question(this, "ques" , "提问" ,
+			QMessageBox::Save | QMessageBox::Cancel,QMessageBox::Cancel)
+	{
+		qDebug ( ) <<"选择的是保存";
+	}
+	else
+	{
+		qDebug () <<"选择的是取消";
+	}
+	//警告对话框
+	QMessageBox::warning(this,"warning","警告");
+16、界面布局
+	实现登陆窗口
+	利用布局方式给窗口进行美化
+	选取widget进行布局，水平布局、垂直布局、栅格布局
+	给用户名、密码、登陆、退出按钮进行布局
+	默认窗口和控件之间有9间隙，可以调整layoutLeftMargin4.6利用弹簧进行布局
