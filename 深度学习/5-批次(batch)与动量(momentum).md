@@ -2,7 +2,7 @@
 
 1、==Batch== **批次**：
 
-实际上，在定义损失函数时，我们会将训练资料**随机**分为多个 ==batch== **批次**，对于每一个批次单独进行处理，分别计算其损失函数 $L^i$ ，然后在对每一个 $L^i$ 计算梯度 $\boldsymbol{g} = \nabla L^i(\boldsymbol{\theta}^0)$ ，并用此梯度更新参数向量 $\boldsymbol{\theta}$ 。
+实际上，在定义损失函数时，我们会将训练资料**随机**分为多个 ==batch== **批次**，对于每一个批次单独进行处理，分别计算其损失函数 $L^i$ ，然后在对每一个 $L^i$ 计算梯度 $\boldsymbol{g}^i = \nabla L^i(\boldsymbol{\theta}^{i-1})$ ，并用此梯度更新参数向量 $\boldsymbol{\theta}$ 。
 
 - 将所有 batch 都训练完后，称为完成一个 ==epoch==（轮次）
 - 每一轮 epoch 后，进行一次 ==Shuffle== **洗牌，将训练模型的数据集进行打乱的操作**
@@ -27,7 +27,6 @@
 3、实际上：
 
 - 尽管 batch size 越大，处理一个 epoch 速度越快，但同时，需要达到同样精度所需的 epoch 数量也越多。(1 个 epoch 的更新次数变少)
-- 过大的 batch size 会使网络很容易收敛到一些不好的**局部最优点**。
 - 过大的 batch size 导致**模型泛化能力下降**。
   - 研究表明大的 batch size 收敛到 sharp minimum，而小的 batch size 收敛到 flat minimum，后者具有更好的泛化能力。sharp minimum 使得测试集的 Loss 函数稍有不一样就会有比较差的结果。<img src="img/image-20221104165201870.png" alt="image-20221104165201870" style="zoom:50%;" />
   - 原因是小的 batch size 带来的噪声有助于逃离 sharp minimum。
@@ -47,9 +46,14 @@
 
 6、==momentum== 动量：使用前一步的移动影响当前移动。
 
+- 以物理中的动量为例，当小球滚动到局部最小值时，还有一个向右的动量，会继续向右滚动，有可能逃出局部最小值；
+- 而若使用梯度下降法，我们会在局部最小值(梯度为 0)的地方停下。
+
+<img src="img/image-20221105131655485.png" alt="image-20221105131655485" style="zoom:50%;" />
+
 - 一般的梯度下降法的参数更新：$\boldsymbol{\theta}^{i+1} \leftarrow \boldsymbol{\theta}^i - \eta\boldsymbol{g}^i$ 
-- 在这里引入 movement 变量 $\boldsymbol{m}$，用于存储这一步的移动。其中：$\boldsymbol{m}^{i+1}=\lambda\boldsymbol{m}^i - \eta\boldsymbol{g}^i$
-- 实际上的参数更新：$\boldsymbol{\theta}^{i+1} \leftarrow \boldsymbol{\theta}^i - \eta\boldsymbol{g}^i + \lambda\boldsymbol{m}^i$ 
+- 在这里引入 movement 变量 $\boldsymbol{m}$，表示当前一步的移动。其中：$\boldsymbol{m}^{i+1}=\lambda\boldsymbol{m}^i - \eta\boldsymbol{g}^i$
+- 参数更新：$\boldsymbol{\theta}^{i+1} \leftarrow \boldsymbol{\theta}^i+\boldsymbol{m}^{i+1}=\boldsymbol{\theta}^i - \eta\boldsymbol{g}^i + \lambda\boldsymbol{m}^i$ ，使用到了上一步的移动。
 - 实际上是使用了前述所有计算的梯度 $\boldsymbol{g}^i$。
 
 <img src="img/image-20221028150541612.png" alt="image-20221028150541612" style="zoom: 50%;" />
