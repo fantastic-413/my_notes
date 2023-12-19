@@ -1,10 +1,12 @@
+张量如何捋清？==**按`[]`括号从外到里算维度**==，无论是计算还是变换
+
 1. 导入 `numpy`：
 
 ```python
 import numpy as np
 ```
 
-2. 创建 `array`：
+2. 创建 `array`：==**按`[]`括号从外到里算维度**==
 
 ```python
 array = np.array([[1,2,3],
