@@ -1,3 +1,9 @@
+### C++
+
+- STL 栈和队列也不被归类为容器，而被归类为container adapter容器适配器。栈的底层实现可以是vector，**deque**，list。
+
+
+
 ## 面向对象
 
 ### 1、设计原则
